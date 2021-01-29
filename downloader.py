@@ -85,7 +85,10 @@ def download(args):
                 print(f"Invalid chapter number: {chapter}")
                 return
             print(f"Downloading chapter {chapter}...")
-            webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
+            if args.one_file:
+                webtoon.download_imgs_of(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
+            else:
+                webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
     
     except Exception:
         traceback.print_exc()
@@ -99,6 +102,7 @@ def main():
     parser.add_argument("--name", help="Specify the webtoon's name")
     parser.add_argument("--id", help="Specify the webtoon's id")
     parser.add_argument("--chapters", help="Chapters to download")
+    parser.add_argument("--one-file", action="store_true", default=False, help="Aggregate all chapter images into one file")
     parser.add_argument("output", metavar="output", type=str, nargs="?", help="Output directory")
     args = parser.parse_args()
     

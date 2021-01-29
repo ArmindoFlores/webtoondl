@@ -7,7 +7,7 @@ This is a simple script that allows you to search and download webtoons publishe
 To run the script just type `python downloader.py --help` (`python3 downloader.py --help` if you have multiple installations of python) and you'll get the usage information:
 
 ```
-usage: downloader.py [-h] [--url URL] [--name NAME] [--id ID] [--chapters CHAPTERS] option [output]
+usage: downloader.py [-h] [--url URL] [--name NAME] [--id ID] [--chapters CHAPTERS] [--one-file] option [output]
 
 Download webtoons
 
@@ -21,6 +21,7 @@ optional arguments:
   --name NAME          Specify the webtoon's name
   --id ID              Specify the webtoon's id
   --chapters CHAPTERS  Chapters to download
+  --one-file           Aggregate all chapter images into one file
 ```
 
 As you can see, there are 2 basic modes of execution: download and search. To search for a work, simply use `downloader.py search --name="name"`
@@ -77,3 +78,5 @@ You can also use an URL to download a webtoon:
 ```
 web@toon:~$ python downloader.py download downloads/ --url="https://www.webtoons.com/en/action/the-god-of-high-school/list?title_no=66" --chapters=1
 ```
+
+Finally, you can use the `--one-file` flag to save each chapter in a single file.

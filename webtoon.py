@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 import requests
 import tqdm
 from bs4 import BeautifulSoup
@@ -50,6 +52,21 @@ def download_imgs(urls, referer, name):
         names.append(f"{name}-{c}.jpg")
         c += 1
     return names
+
+def download_imgs_of(urls, referer, name):
+    c = 1
+    for url in tqdm.tqdm(urls):
+        req = requests.get(url, headers={"Referer": referer})
+        assert req.status_code == 200
+        arr = np.asarray(bytearray(req.content), dtype=np.uint8)
+        img = cv2.imdecode(arr, 1)
+        if c == 1:
+            curr = img
+        else:
+            curr = cv2.vconcat([curr, img])
+        c += 1
+    cv2.imwrite(name+".jpg", curr)
+    return name
 
 def search(query):
     original_results, canvas_results = [], []
