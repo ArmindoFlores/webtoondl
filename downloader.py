@@ -1,6 +1,7 @@
 import argparse
 import base64
 import os
+import traceback
 
 import webtoon
 
@@ -86,13 +87,14 @@ def download(args):
             print(f"Downloading chapter {chapter}...")
             if args.one_file:
                 if webtoon.cv2 is None:
-                    print("Can't use the --one-file option without cv2 and numpy")
+                    print("Can't use the --one-file option without cv2, imageio and numpy")
                     return
                 webtoon.download_imgs_of(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
             else:
                 webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
     
     except Exception:
+        traceback.print_exc()
         print("An error occurred while downloading")
         return
 

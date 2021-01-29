@@ -1,8 +1,11 @@
 try:
     import cv2
+    import imageio
     import numpy as np
 except Exception:
     cv2 = None
+import os
+
 import requests
 import tqdm
 from bs4 import BeautifulSoup
@@ -44,31 +47,49 @@ def get_img_urls(url, episode, eid):
             images.append(img["data-url"])
     return images, full_url
 
+def get_filetype(url):
+    if url.endswith("/"):
+        return url[:-1].split("/")[-1].split("?")[0].split(".")[-1]
+    else:
+        return url.split("/")[-1].split("?")[0].split(".")[-1]
+
 def download_imgs(urls, referer, name):
     names = []
     c = 1
     for url in tqdm.tqdm(urls):
+        ext = get_filetype(url)
         req = requests.get(url, headers={"Referer": referer})
         assert req.status_code == 200
-        with open(f"{name}-{c}.jpg", "wb") as file:
+        with open(f"{name}-{c}.{ext}", "wb") as file:
             file.write(req.content)
-        names.append(f"{name}-{c}.jpg")
+        names.append(f"{name}-{c}.{ext}")
         c += 1
     return names
 
 def download_imgs_of(urls, referer, name):
     c = 1
     for url in tqdm.tqdm(urls):
+        ext = get_filetype(url)
         req = requests.get(url, headers={"Referer": referer})
         assert req.status_code == 200
-        arr = np.asarray(bytearray(req.content), dtype=np.uint8)
-        img = cv2.imdecode(arr, 1)
+        if ext != "gif":
+            arr = np.asarray(bytearray(req.content), dtype=np.uint8)
+            img = cv2.imdecode(arr, 1)
+        else:
+            with open("temp.gif", "wb") as f:
+                f.write(req.content)
+            img = np.array(imageio.imread("temp.gif"))[:,:,:-1]
+            os.remove("temp.gif")
         if c == 1:
             curr = img
         else:
+            if img.shape[1] > curr.shape[1]:
+                img = img[:,:curr.shape[1]-img.shape[1],:]
+            elif img.shape[1] < curr.shape[1]:
+                curr = curr[:,:img.shape[1]-curr.shape[1],:]
             curr = cv2.vconcat([curr, img])
         c += 1
-    cv2.imwrite(name+".jpg", curr)
+    cv2.imwrite(name+".png", curr)
     return name
 
 def search(query):
