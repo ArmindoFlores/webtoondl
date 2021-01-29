@@ -1,6 +1,7 @@
 import argparse
 import base64
 import os
+import traceback
 
 import webtoon
 
@@ -69,12 +70,15 @@ def download(args):
             url = webtoon.get_url_from_id(args.id)
             for chapter in chapters:
                 urls, referer = webtoon.get_img_urls(url, chapter, int(args.id[1:]))
+                if len(urls) == 0:
+                    print(f"Invalid chapter number: {chapter}")
+                    return
                 print(f"Downloading chapter {chapter}...")
                 webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
         else:
             print("Please specify either --id or --url")
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         print("An error occurred while downloading")
         return
 

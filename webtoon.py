@@ -27,8 +27,9 @@ def get_img_urls(url, episode, eid):
     content = soup.find("div", {"id": "content"})
     imagelist = content.find("div", {"id": "_imageList"})
     images = []
-    for img in imagelist.findAll("img", {"class": "_images"}):
-        images.append(img["data-url"])
+    if imagelist is not None:
+        for img in imagelist.findAll("img", {"class": "_images"}):
+            images.append(img["data-url"])
     return images, full_url
 
 def download_imgs(urls, referer, name):
