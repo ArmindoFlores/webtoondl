@@ -1,0 +1,5 @@
+lxml
+requests
+BeautifulSoup4
+opencv-python
+tqdm
