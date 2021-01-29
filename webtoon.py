@@ -1,5 +1,8 @@
-import cv2
-import numpy as np
+try:
+    import cv2
+    import numpy as np
+except Exception:
+    cv2 = None
 import requests
 import tqdm
 from bs4 import BeautifulSoup

@@ -1,7 +1,6 @@
 import argparse
 import base64
 import os
-import traceback
 
 import webtoon
 
@@ -86,33 +85,38 @@ def download(args):
                 return
             print(f"Downloading chapter {chapter}...")
             if args.one_file:
+                if webtoon.cv2 is None:
+                    print("Can't use the --one-file option without cv2 and numpy")
+                    return
                 webtoon.download_imgs_of(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
             else:
                 webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
     
     except Exception:
-        traceback.print_exc()
         print("An error occurred while downloading")
         return
 
 def main():
-    parser = argparse.ArgumentParser(description="Download webtoons")
-    parser.add_argument("option", metavar="option", type=str, nargs=1, help="search / download")
-    parser.add_argument("--url", help="Specify the download url")
-    parser.add_argument("--name", help="Specify the webtoon's name")
-    parser.add_argument("--id", help="Specify the webtoon's id")
-    parser.add_argument("--chapters", help="Chapters to download")
-    parser.add_argument("--one-file", action="store_true", default=False, help="Aggregate all chapter images into one file")
-    parser.add_argument("output", metavar="output", type=str, nargs="?", help="Output directory")
-    args = parser.parse_args()
-    
-    if args.option[0] == "search":
-        search(args)
-    elif args.option[0] == "download":
-        download(args)
-    else:
-        print(f"Invalid option '{args.option[0]}'")
-        parser.print_usage()
+    try:
+        parser = argparse.ArgumentParser(description="Download webtoons")
+        parser.add_argument("option", metavar="option", type=str, nargs=1, help="search / download")
+        parser.add_argument("--url", help="Specify the download url")
+        parser.add_argument("--name", help="Specify the webtoon's name")
+        parser.add_argument("--id", help="Specify the webtoon's id")
+        parser.add_argument("--chapters", help="Chapters to download")
+        parser.add_argument("--one-file", action="store_true", default=False, help="Aggregate all chapter images into one file")
+        parser.add_argument("output", metavar="output", type=str, nargs="?", help="Output directory")
+        args = parser.parse_args()
+        
+        if args.option[0] == "search":
+            search(args)
+        elif args.option[0] == "download":
+            download(args)
+        else:
+            print(f"Invalid option '{args.option[0]}'")
+            parser.print_usage()
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == "__main__":
     main()
