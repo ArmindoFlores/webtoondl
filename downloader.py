@@ -68,15 +68,25 @@ def download(args):
     try:
         if args.id is not None:
             url = webtoon.get_url_from_id(args.id)
-            for chapter in chapters:
-                urls, referer = webtoon.get_img_urls(url, chapter, int(args.id[1:]))
-                if len(urls) == 0:
-                    print(f"Invalid chapter number: {chapter}")
-                    return
-                print(f"Downloading chapter {chapter}...")
-                webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
+            eid = args.id[1:]
+        elif args.url is not None:
+            if args.url.endswith("/"):
+                url = "/".join(args.url[:-1].split("/")[:-1]) +"/"
+            else:
+                url = "/".join(args.url.split("/")[:-1]) + "/"
+            eid = webtoon.get_id_from_url(args.url)
         else:
             print("Please specify either --id or --url")
+            return
+        
+        for chapter in chapters:
+            urls, referer = webtoon.get_img_urls(url, chapter, int(eid))
+            if len(urls) == 0:
+                print(f"Invalid chapter number: {chapter}")
+                return
+            print(f"Downloading chapter {chapter}...")
+            webtoon.download_imgs(urls, referer, os.path.join(args.output, webtoon.get_name_from_url(url)+f"-ch{chapter}"))
+    
     except Exception:
         traceback.print_exc()
         print("An error occurred while downloading")

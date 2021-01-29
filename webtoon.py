@@ -10,6 +10,13 @@ def get_name_from_url(url):
         return url[:-1].split("/")[-1]
     else:
         return url.split("/")[-1]
+    
+def get_id_from_url(url):
+    if url.endswith("/"):
+        url = url[:-1].split("/")[-1]
+    else:
+        url = url.split("/")[-1]
+    return url.split("=")[-1]
 
 def get_url_from_id(eid):
     if eid.startswith("o"):

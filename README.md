@@ -67,7 +67,13 @@ And now we can see all images that have been dowloaded:
 web@toon:~$ ls downloads/
 total 16436
 -rwxrwxrwx 1 web web  64275 Jan 29 15:26 tower-of-god-ch1-1.jpg
--rwxrwxrwx 1 web armwebindoflores  98637 Jan 29 15:26 tower-of-god-ch1-2.jpg
+-rwxrwxrwx 1 web web  98637 Jan 29 15:26 tower-of-god-ch1-2.jpg
 -rwxrwxrwx 1 web web  79308 Jan 29 15:26 tower-of-god-ch1-3.jpg
 ...
+```
+
+You can also use an URL to download a webtoon:
+
+```
+web@toon:~$ python downloader.py download downloads/ --url="https://www.webtoons.com/en/action/the-god-of-high-school/list?title_no=66" --chapters=1
 ```
